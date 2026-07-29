@@ -1,5 +1,7 @@
 # CA Study Tracker (Foundation + Intermediate + Final) — Installable Mobile App
 
+**Created by Harsh Jain**
+
 One single app now covers all three CA levels. A dropdown at the top lets
 you (or any friend using it) switch between:
 - CA Foundation
