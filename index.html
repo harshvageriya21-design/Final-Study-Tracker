@@ -11,7 +11,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <link rel="icon" href="icons/icon-192.png">
-<title>CA Final Study Tracker</title>
+<title>CA Study Tracker - Foundation | Inter | Final</title>
 <style>
   :root{
     --navy:#1f3864; --blue:#2e5395; --lightblue:#eaf0fb;
@@ -22,8 +22,10 @@
   }
   *{box-sizing:border-box;}
   body{margin:0;font-family:'Segoe UI',Arial,sans-serif;background:var(--grey);color:var(--text);}
-  header{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;}
-  header h1{margin:0;font-size:1.3rem;font-weight:600;}
+  header{background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;padding:18px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  header h1{margin:0;font-size:1.25rem;font-weight:600;}
+  .levelPicker{display:flex;align-items:center;gap:8px;font-size:0.85rem;}
+  .levelPicker select{padding:7px 10px;border-radius:6px;border:none;font-weight:700;font-size:0.9rem;color:var(--navy);}
   #saveStatus{font-size:0.8rem;opacity:0.9;display:flex;align-items:center;gap:6px;}
   .dot{width:8px;height:8px;border-radius:50%;background:#7CFC7C;display:inline-block;transition:background .3s;}
   .dot.saving{background:#ffd54f;}
@@ -68,8 +70,9 @@
   /* ---- Mobile responsive: turn table rows into stacked cards ---- */
   @media (max-width: 720px){
     header{padding:12px 14px;}
-    header h1{font-size:1.05rem;}
+    header h1{font-size:1.0rem;}
     .examBar{width:100%;justify-content:space-between;}
+    .levelPicker{width:100%;justify-content:space-between;}
     nav button{min-width:80px;font-size:0.72rem;padding:10px 4px;}
     main{padding:10px;}
     .cards{grid-template-columns:repeat(2,1fr);}
@@ -102,7 +105,15 @@
 <body>
 
 <header>
-  <h1>📘 CA Final Study Tracker</h1>
+  <h1 id="mainTitle">📘 CA Study Tracker</h1>
+  <div class="levelPicker">
+    Level:
+    <select id="levelSelect">
+      <option value="FOUNDATION">CA Foundation</option>
+      <option value="INTER">CA Intermediate</option>
+      <option value="FINAL">CA Final</option>
+    </select>
+  </div>
   <div class="examBar">
     Exam Date: <input type="date" id="examDate">
     <span id="countdown"></span>
@@ -116,8 +127,189 @@
 <main id="main"></main>
 
 <script>
-/* ---------------- Subject catalog (edit chapter names/subjects to match your ICAI study material) ---------------- */
-const CATALOG = {
+/* ================= Subject catalogs per level ================= */
+/* Edit chapter names/subjects to match your exact ICAI study material - these are a general reference. */
+
+const CATALOGS = {
+
+FOUNDATION: {
+  F1: { name: "Paper 1: Accounting", chapters: [
+    "Theoretical Framework",
+    "Accounting Process",
+    "Bank Reconciliation Statement",
+    "Inventories",
+    "Concept and Accounting of Depreciation",
+    "Bills of Exchange and Promissory Notes",
+    "Sale of Goods on Approval or Return Basis",
+    "Consignments",
+    "Average Due Date & Account Current",
+    "Preparation of Final Accounts of Sole Proprietors",
+    "Partnership Accounts - Fundamentals",
+    "Partnership Accounts - Admission/Retirement/Death of a Partner",
+    "Partnership Accounts - Dissolution of Partnership Firm",
+    "Company Accounts - Introduction & Issue of Shares/Debentures",
+    "Accounting for Not-for-Profit Organisations" ]},
+  F2: { name: "Paper 2: Business Laws", chapters: [
+    "Indian Regulatory Framework",
+    "The Indian Contract Act 1872 - General Nature of Contract",
+    "The Indian Contract Act 1872 - Consideration",
+    "The Indian Contract Act 1872 - Other Essential Elements of a Contract",
+    "The Indian Contract Act 1872 - Performance of Contract",
+    "The Indian Contract Act 1872 - Breach of Contract, Contingent & Quasi Contracts",
+    "The Indian Contract Act 1872 - Indemnity, Guarantee, Bailment & Pledge",
+    "The Indian Contract Act 1872 - Agency",
+    "The Sale of Goods Act 1930",
+    "The Indian Partnership Act 1932",
+    "The Limited Liability Partnership Act 2008",
+    "The Companies Act 2013 - Essential Concepts",
+    "The Negotiable Instruments Act 1881",
+    "General Awareness of Skill Based Legislations" ]},
+  F3: { name: "Paper 3: Quantitative Aptitude", chapters: [
+    "Ratio and Proportion, Indices, Logarithms",
+    "Equations and Linear Inequalities",
+    "Time Value of Money",
+    "Permutations and Combinations",
+    "Sequence and Series",
+    "Sets, Relations and Functions, Basic Limits & Continuity",
+    "Differential and Integral Calculus (Basic Applications)",
+    "Descriptive Statistics - Measures of Central Tendency and Dispersion",
+    "Probability",
+    "Theoretical Distributions",
+    "Correlation and Regression",
+    "Index Numbers and Time Series",
+    "Logical Reasoning - Number Series, Coding-Decoding, Odd Man Out",
+    "Logical Reasoning - Direction Tests, Seating Arrangements, Blood Relations",
+    "Logical Reasoning - Syllogism" ]},
+  F4: { name: "Paper 4: Business Economics", chapters: [
+    "Nature & Scope of Business Economics",
+    "Theory of Demand and Supply",
+    "Theory of Production and Cost",
+    "Price Determination in Different Markets",
+    "Business Cycles",
+    "Money and Banking",
+    "Public Finance",
+    "International Trade",
+    "Determination of National Income",
+    "Indian Economy - Features & Issues" ]}
+},
+
+INTER: {
+  I1: { name: "Paper 1: Advanced Accounting", chapters: [
+    "Introduction to Accounting Standards",
+    "Framework for Preparation & Presentation of Financial Statements",
+    "AS 1 - Disclosure of Accounting Policies",
+    "AS 2 - Valuation of Inventories",
+    "AS 3 - Cash Flow Statements",
+    "AS 4 - Contingencies and Events Occurring After the Balance Sheet Date",
+    "AS 5 - Net Profit or Loss for the Period, Prior Period Items and Changes in Accounting Policies",
+    "AS 7 - Construction Contracts",
+    "AS 9 - Revenue Recognition",
+    "AS 10 - Property, Plant and Equipment",
+    "AS 11 - The Effects of Changes in Foreign Exchange Rates",
+    "AS 12 - Accounting for Government Grants",
+    "AS 13 - Accounting for Investments",
+    "AS 15 - Employee Benefits",
+    "AS 16 - Borrowing Costs",
+    "AS 19 - Leases",
+    "AS 20 - Earnings Per Share",
+    "AS 22 - Accounting for Taxes on Income",
+    "AS 24 - Discontinuing Operations",
+    "AS 25 - Interim Financial Reporting",
+    "AS 26 - Intangible Assets",
+    "AS 27 - Financial Reporting of Interests in Joint Ventures",
+    "AS 28 - Impairment of Assets",
+    "AS 29 - Provisions, Contingent Liabilities and Contingent Assets",
+    "Financial Statements of Companies",
+    "Buyback of Securities & Equity Shares with Differential Rights",
+    "Amalgamation of Companies",
+    "Accounting for Reconstruction of Companies",
+    "Accounts of Branches including Foreign Branches",
+    "Accounts of Banking Companies",
+    "Financial Statements of Insurance Companies",
+    "Financial Statements of NBFCs" ]},
+  I2: { name: "Paper 2: Corporate and Other Laws", chapters: [
+    "Preliminary and Incorporation of Company",
+    "Share Capital and Debentures",
+    "Acceptance of Deposits by Companies",
+    "Registration of Charges",
+    "Management & Administration",
+    "Declaration and Payment of Dividend",
+    "Accounts of Companies",
+    "Audit and Auditors",
+    "Companies Incorporated Outside India",
+    "The Limited Liability Partnership Act 2008",
+    "The General Clauses Act 1897",
+    "Interpretation of Statutes" ]},
+  I3: { name: "Paper 3: Taxation", chapters: [
+    "Basic Concepts (Income Tax)",
+    "Residence and Scope of Total Income",
+    "Income from Salary",
+    "Income from House Property",
+    "Profits and Gains of Business or Profession",
+    "Capital Gains",
+    "Income from Other Sources",
+    "Clubbing of Income",
+    "Set off and Carry Forward of Losses",
+    "Deductions from Gross Total Income",
+    "Computation of Total Income and Tax Payable",
+    "Advance Tax, TDS and TCS",
+    "Provisions for Filing Return of Income",
+    "GST in India - An Introduction",
+    "Supply under GST",
+    "Charge of GST",
+    "Exemptions from GST",
+    "Time and Value of Supply",
+    "Input Tax Credit",
+    "Registration under GST",
+    "Tax Invoice, Credit and Debit Notes, E-Way Bill",
+    "Payment of Tax",
+    "Returns under GST" ]},
+  I4: { name: "Paper 4: Cost and Management Accounting", chapters: [
+    "Introduction to Cost and Management Accounting",
+    "Material Cost",
+    "Employee Cost and Direct Expenses",
+    "Overheads - Absorption Costing Method",
+    "Activity Based Costing",
+    "Cost Sheet",
+    "Cost Accounting Systems",
+    "Unit & Batch Costing",
+    "Job Costing and Process Costing",
+    "Joint Products and By Products",
+    "Service Costing",
+    "Standard Costing",
+    "Marginal Costing",
+    "Budget and Budgetary Control" ]},
+  I5: { name: "Paper 5: Auditing and Ethics", chapters: [
+    "Nature, Objective and Scope of Audit",
+    "Audit Strategy, Audit Planning and Audit Programme",
+    "Risk Assessment and Internal Control",
+    "Audit Evidence",
+    "Audit of Items of Financial Statements",
+    "Audit Documentation",
+    "Completion and Review",
+    "Audit Report",
+    "Special Features of Audit of Different Type of Entities",
+    "Audit of Banks",
+    "Audit of Different Types of Undertakings",
+    "Ethics and Terms of Audit Engagements" ]},
+  I6: { name: "Paper 6: Financial and Strategic Management", chapters: [
+    "Scope and Objectives of Financial Management",
+    "Types of Financing",
+    "Financial Analysis and Planning - Ratio Analysis",
+    "Cost of Capital",
+    "Financing Decisions - Capital Structure",
+    "Financing Decisions - Leverages",
+    "Investment Decisions",
+    "Dividend Decision",
+    "Management of Working Capital",
+    "Introduction to Strategic Management",
+    "Strategic Analysis: External Environment",
+    "Strategic Analysis: Internal Environment",
+    "Strategic Choices",
+    "Strategy Implementation and Evaluation" ]}
+},
+
+FINAL: {
   FR: { name: "Financial Reporting", chapters: [
     "Framework for Preparation of Financial Statements",
     "Ind AS 1 - Presentation of Financial Statements",
@@ -200,55 +392,113 @@ const CATALOG = {
     "Financial Management Application (Case-based)","Direct & Indirect Tax Application (Case-based)",
     "Audit & Assurance Application (Case-based)","Costing & Decision Making (Case-based)",
     "Economic, Business and Regulatory Environment","Practice - Integrated Case Study Mock Sets" ]}
+}
+
 };
+
+const LEVEL_NAMES = { FOUNDATION: "CA Foundation", INTER: "CA Intermediate", FINAL: "CA Final" };
+const GROUPS = {
+  FOUNDATION: null,
+  INTER: { "Group I": ["I1","I2","I3"], "Group II": ["I4","I5","I6"] },
+  FINAL: { "Group I": ["FR","AFM","AUDIT"], "Group II": ["DT","IDT","IBS"] }
+};
+const LEVEL_ICONS = { FOUNDATION: "🌱", INTER: "📗", FINAL: "🏆" };
 const STATUS_OPTS = ["Not Started","In Progress","Completed"];
 const REV_OPTS = ["Pending","In Progress","Done"];
-const STORAGE_KEY = "ca-final-tracker-data-v1";
+const TEST_CATEGORIES = ["Full Test","MTP","RTP","Past Paper","Test Series","Model Paper","Chapter Test","MCQ Practice","Other"];
+const STORAGE_KEY = "ca-all-levels-tracker-v1";
 
 let state = null;
 let saveTimer = null;
+let activeTab = "DASH";
 
-function defaultState(){
+function CATALOG(){ return CATALOGS[state.currentLevel]; }
+
+/* ================= State ================= */
+function defaultLevelSubjects(levelKey){
   const subjects = {};
-  Object.keys(CATALOG).forEach(k=>{
-    subjects[k] = { chapters: CATALOG[k].chapters.map(()=>({
+  Object.keys(CATALOGS[levelKey]).forEach(k=>{
+    subjects[k] = { chapters: CATALOGS[levelKey][k].chapters.map(()=>({
       status:"Not Started", studyDate:"", rev1:"Pending", rev2:"Pending", rev3:"Pending",
-      qb:"Not Started", tests:0, marks:0, notes:""
+      qb:"Not Started", tests:0, marks:0, weightage:"", notes:""
     }))};
   });
-  return { examDate:"", subjects, testLog:[] };
+  return subjects;
+}
+
+function defaultLevelState(levelKey){
+  return { examDate:"", subjects: defaultLevelSubjects(levelKey), testLog: [] };
+}
+
+function defaultState(){
+  return {
+    currentLevel: "FINAL",
+    levels: {
+      FOUNDATION: defaultLevelState("FOUNDATION"),
+      INTER: defaultLevelState("INTER"),
+      FINAL: defaultLevelState("FINAL")
+    }
+  };
+}
+
+function migrateLevelData(levelKey, levelState){
+  const def = defaultLevelState(levelKey);
+  Object.keys(CATALOGS[levelKey]).forEach(k=>{
+    if(!levelState.subjects[k] || !Array.isArray(levelState.subjects[k].chapters) ||
+       levelState.subjects[k].chapters.length !== CATALOGS[levelKey][k].chapters.length){
+      levelState.subjects[k] = def.subjects[k];
+    } else {
+      levelState.subjects[k].chapters.forEach(c=>{
+        if(c.qb === undefined) c.qb = "Not Started";
+        if(c.marks === undefined) c.marks = c.avgScore !== undefined ? c.avgScore : 0;
+        if(c.weightage === undefined) c.weightage = "";
+      });
+    }
+  });
+  if(!levelState.testLog) levelState.testLog = [];
+  levelState.testLog.forEach(t=>{
+    if(t.category === undefined) t.category = "";
+    if(t.source === undefined) t.source = "";
+  });
+  if(levelState.examDate === undefined) levelState.examDate = "";
+  return levelState;
 }
 
 function loadState(){
   try{
     const raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){
-      const parsed = JSON.parse(raw);
-      const def = defaultState();
-      Object.keys(def.subjects).forEach(k=>{
-        if(!parsed.subjects[k] || !Array.isArray(parsed.subjects[k].chapters) ||
-           parsed.subjects[k].chapters.length !== CATALOG[k].chapters.length){
-          parsed.subjects[k] = def.subjects[k];
-        } else {
-          parsed.subjects[k].chapters.forEach(c=>{
-            if(c.qb === undefined) c.qb = "Not Started";
-            if(c.marks === undefined) c.marks = c.avgScore !== undefined ? c.avgScore : 0;
-          });
-        }
-      });
-      if(!parsed.testLog) parsed.testLog = [];
-      parsed.testLog.forEach(t=>{
-        if(t.category === undefined) t.category = "";
-        if(t.source === undefined) t.source = "";
-      });
-      state = parsed;
-    } else {
-      state = defaultState();
+    if(!raw){ state = defaultState(); return; }
+    const parsed = JSON.parse(raw);
+
+    if(!parsed.levels){
+      // old single-level (CA Final only) tracker data - migrate it in without losing it
+      const fresh = defaultState();
+      if(parsed.subjects){
+        fresh.levels.FINAL = migrateLevelData("FINAL", {
+          examDate: parsed.examDate || "",
+          subjects: parsed.subjects,
+          testLog: parsed.testLog || []
+        });
+      }
+      fresh.currentLevel = "FINAL";
+      state = fresh;
+      return;
     }
+
+    const fresh = defaultState();
+    ["FOUNDATION","INTER","FINAL"].forEach(lvl=>{
+      if(parsed.levels[lvl]){
+        fresh.levels[lvl] = migrateLevelData(lvl, parsed.levels[lvl]);
+      }
+    });
+    fresh.currentLevel = ["FOUNDATION","INTER","FINAL"].includes(parsed.currentLevel) ? parsed.currentLevel : "FINAL";
+    state = fresh;
   }catch(e){
     state = defaultState();
   }
 }
+
+function currentLevelState(){ return state.levels[state.currentLevel]; }
 
 function setSaveStatus(saving){
   const dot = document.getElementById("saveDot");
@@ -276,20 +526,21 @@ function cls(s){ return s.replace(/\s+/g,"-"); }
 
 function updateCountdown(){
   const el = document.getElementById("countdown");
-  if(!state.examDate){ el.textContent = ""; return; }
-  const d = new Date(state.examDate); const now = new Date();
+  const examDate = currentLevelState().examDate;
+  if(!examDate){ el.textContent = ""; return; }
+  const d = new Date(examDate); const now = new Date();
   const days = Math.ceil((d - now)/86400000);
   el.textContent = days >= 0 ? `(${days} days left)` : "(exam date passed)";
 }
 
-/* ---------------- Dashboard ---------------- */
+/* ================= Dashboard ================= */
 function computeSubjectStats(k){
-  const chs = state.subjects[k].chapters;
+  const chs = currentLevelState().subjects[k].chapters;
   const total = chs.length;
   const completed = chs.filter(c=>c.status==="Completed").length;
   const inprog = chs.filter(c=>c.status==="In Progress").length;
   const notstarted = total - completed - inprog;
-  const testsForSubj = state.testLog.filter(t=>t.subject===k);
+  const testsForSubj = currentLevelState().testLog.filter(t=>t.subject===k);
   let avgScore = 0;
   if(testsForSubj.length){
     avgScore = testsForSubj.reduce((s,t)=> s + (t.total>0 ? (t.marks/t.total*100) : 0),0)/testsForSubj.length;
@@ -299,16 +550,32 @@ function computeSubjectStats(k){
   return {total,completed,inprog,notstarted,pct: total? Math.round(completed/total*100):0, avgScore: Math.round(avgScore), testsCount: testsForSubj.length, rev3Done, qbDone, qbPct: total? Math.round(qbDone/total*100):0};
 }
 
+function computeGroupStats(subjectKeys){
+  let total=0, completed=0, qbDone=0, testsCount=0, scoreSum=0, scoreN=0;
+  subjectKeys.forEach(k=>{
+    if(!CATALOG()[k]) return;
+    const s = computeSubjectStats(k);
+    total += s.total; completed += s.completed; qbDone += s.qbDone; testsCount += s.testsCount;
+    if(s.testsCount){ scoreSum += s.avgScore * s.testsCount; scoreN += s.testsCount; }
+  });
+  return {
+    total, completed, qbDone, testsCount,
+    pct: total? Math.round(completed/total*100):0,
+    qbPct: total? Math.round(qbDone/total*100):0,
+    avgScore: scoreN? Math.round(scoreSum/scoreN):0
+  };
+}
+
 function renderDashboard(){
   const wrap = document.getElementById("dash-content");
   if(!wrap) return;
-  let totalCh=0, totalDone=0, totalTests=state.testLog.length;
+  let totalCh=0, totalDone=0, totalTests=currentLevelState().testLog.length;
   let rows = "";
-  Object.keys(CATALOG).forEach(k=>{
+  Object.keys(CATALOG()).forEach(k=>{
     const s = computeSubjectStats(k);
     totalCh += s.total; totalDone += s.completed;
     rows += `<tr>
-      <td class="name" data-label="Subject">${CATALOG[k].name}</td>
+      <td class="name" data-label="Subject">${CATALOG()[k].name}</td>
       <td data-label="Total">${s.total}</td>
       <td data-label="Completed">${s.completed}</td>
       <td data-label="In Progress">${s.inprog}</td>
@@ -326,34 +593,61 @@ function renderDashboard(){
   });
   const overallPct = totalCh? Math.round(totalDone/totalCh*100):0;
 
+  const groups = GROUPS[state.currentLevel];
+  let groupBlock = "";
+  if(groups){
+    const groupCards = Object.keys(groups).map(gName=>{
+      const gs = computeGroupStats(groups[gName]);
+      const papers = groups[gName].filter(k=>CATALOG()[k]).map(k=>CATALOG()[k].name.replace(/^Paper \d+:\s*/,"")).join(", ");
+      return `
+        <div class="card" style="text-align:left;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;">
+            <span style="font-weight:700;color:var(--navy);font-size:0.95rem;">${gName}</span>
+            <span style="font-weight:700;color:var(--navy);">${gs.pct}%</span>
+          </div>
+          <div class="progress-wrap" style="margin-bottom:8px;"><div class="progress-fill" style="width:${gs.pct}%"></div></div>
+          <div style="font-size:0.72rem;color:#667;line-height:1.4;">
+            ${gs.completed}/${gs.total} chapters &middot; QB ${gs.qbPct}% &middot; Tests ${gs.testsCount}${gs.testsCount? ' (avg '+gs.avgScore+'%)':''}
+          </div>
+          <div style="font-size:0.68rem;color:#889;margin-top:6px;">${papers}</div>
+        </div>`;
+    }).join("");
+    groupBlock = `
+      <h3 style="color:var(--navy);font-size:1rem;margin:4px 0 10px;">Group-wise Progress</h3>
+      <div class="cards" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:20px;">${groupCards}</div>
+    `;
+  }
+
   wrap.innerHTML = `
     <div class="cards">
       <div class="card"><div class="num">${overallPct}%</div><div class="lbl">Overall Syllabus Done</div></div>
       <div class="card"><div class="num">${totalDone}/${totalCh}</div><div class="lbl">Chapters Completed</div></div>
       <div class="card"><div class="num">${totalTests}</div><div class="lbl">Tests Logged</div></div>
-      <div class="card"><div class="num">${Object.keys(CATALOG).length}</div><div class="lbl">Subjects</div></div>
+      <div class="card"><div class="num">${Object.keys(CATALOG()).length}</div><div class="lbl">Papers</div></div>
     </div>
+    ${groupBlock}
     <div class="subject-table-wrap">
     <table class="dash-table">
-      <thead><tr><th>Subject</th><th>Total</th><th>Completed</th><th>In Progress</th><th>Not Started</th><th>Syllabus Progress</th><th>Question Bank Progress</th><th>Tests</th><th>Avg Score</th><th>Final Revision</th></tr></thead>
+      <thead><tr><th>Paper / Subject</th><th>Total</th><th>Completed</th><th>In Progress</th><th>Not Started</th><th>Syllabus Progress</th><th>Question Bank Progress</th><th>Tests</th><th>Avg Score</th><th>Final Revision</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     </div>
     <p class="note">Tip: mark a chapter "Completed" as soon as first study pass is done, then track Revision 1 / 2 / 3 separately as you cycle back through the syllabus. This dashboard updates live from every subject tab and the Test Log.</p>
-    <p class="note">Warning: this version saves to this browser local storage, tied to this exact file. Always reopen it from the same saved file in the same browser on the same device, do not re-download a fresh copy or clear browser data, or you will lose your entries. Click the Backup JSON button occasionally as a safety copy.</p>
+    <p class="note">Warning: this version saves to this browser's local storage, tied to this exact file. Always reopen it from the same saved file in the same browser on the same device, do not re-download a fresh copy or clear browser data, or you will lose your entries. Click the Backup JSON button occasionally as a safety copy. Each CA level (Foundation / Inter / Final) keeps its own separate data within this same file.</p>
   `;
 }
 
-/* ---------------- Subject tab ---------------- */
+/* ================= Subject tab ================= */
 function renderSubjectTab(k){
-  const info = CATALOG[k];
-  const chs = state.subjects[k].chapters;
-  const showTestsMarks = k !== "FR";
+  const info = CATALOG()[k];
+  const chs = currentLevelState().subjects[k].chapters;
+  const showTestsMarks = !(state.currentLevel==="FINAL" && k==="FR");
   let rows = "";
   chs.forEach((c,i)=>{
     rows += `<tr>
       <td data-label="#" style="text-align:center;">${i+1}</td>
       <td data-label="Chapter / Topic">${info.chapters[i]}</td>
+      <td data-label="Weightage"><input type="text" placeholder="e.g. 8-10 marks" style="width:90px" data-k="${k}" data-i="${i}" data-f="weightage" value="${c.weightage.replace(/"/g,'&quot;')}"></td>
       <td data-label="Status"><select class="status-select ${cls(c.status)}" data-k="${k}" data-i="${i}" data-f="status">
         ${STATUS_OPTS.map(o=>`<option ${o===c.status?"selected":""}>${o}</option>`).join("")}
       </select></td>
@@ -370,10 +664,10 @@ function renderSubjectTab(k){
   const testsMarksHeaders = showTestsMarks ? "<th>Tests</th><th>Marks</th>" : "";
   return `
     <h2 class="tabtitle">${info.name}</h2>
-    ${k==="FR" ? '<p class="note">Chapter-level Tests/Marks tracking is off for Financial Reporting - log Ind AS-wise chapter tests and marks under the "Chapter Test" category in the Test Series tab instead.</p>' : ""}
+    ${(state.currentLevel==="FINAL" && k==="FR") ? '<p class="note">Chapter-level Tests/Marks tracking is off for Financial Reporting - log Ind AS-wise chapter tests and marks under the "Chapter Test" category in the Test Series tab instead.</p>' : ""}
     <div class="subject-table-wrap">
     <table>
-      <thead><tr><th>#</th><th>Chapter / Topic</th><th>Status</th><th>Studied On</th><th>Rev 1</th><th>Rev 2</th><th>Rev 3</th><th>Question Bank</th>${testsMarksHeaders}<th>Notes</th></tr></thead>
+      <thead><tr><th>#</th><th>Chapter / Topic</th><th>Weightage</th><th>Status</th><th>Studied On</th><th>Rev 1</th><th>Rev 2</th><th>Rev 3</th><th>Question Bank</th>${testsMarksHeaders}<th>Notes</th></tr></thead>
       <tbody>${rows}</tbody>
     </table>
     </div>
@@ -388,7 +682,7 @@ function attachSubjectListeners(k){
       const {k:key,i,f} = e.target.dataset;
       let val = e.target.value;
       if(f==="tests"||f==="marks") val = Number(val)||0;
-      state.subjects[key].chapters[i][f] = val;
+      currentLevelState().subjects[key].chapters[i][f] = val;
       if(e.target.classList.contains("status-select")){
         e.target.className = "status-select " + cls(val);
       }
@@ -401,20 +695,19 @@ function attachSubjectListeners(k){
   });
 }
 
-/* ---------------- Test Series tab ---------------- */
-const TEST_CATEGORIES = ["Full Test","MTP","RTP","Past Paper","Test Series","Model Paper","Chapter Test","MCQ Practice","Other"];
-
+/* ================= Test Series tab ================= */
 function renderTestLogTab(){
+  const testLog = currentLevelState().testLog;
   const catCounts = {};
-  TEST_CATEGORIES.forEach(c=> catCounts[c] = state.testLog.filter(t=>t.category===c).length);
+  TEST_CATEGORIES.forEach(c=> catCounts[c] = testLog.filter(t=>t.category===c).length);
   const catCards = TEST_CATEGORIES.map(c=>`<div class="card"><div class="num">${catCounts[c]}</div><div class="lbl">${c}</div></div>`).join("");
 
-  const rows = state.testLog.map((t,i)=>`
+  const rows = testLog.map((t,i)=>`
     <tr>
       <td data-label="Date">${t.date||""}</td>
       <td data-label="Category">${t.category||""}</td>
       <td data-label="Source / Booklet">${t.source||""}</td>
-      <td data-label="Subject">${CATALOG[t.subject]?CATALOG[t.subject].name:t.subject}</td>
+      <td data-label="Subject">${CATALOG()[t.subject]?CATALOG()[t.subject].name:t.subject}</td>
       <td data-label="Topic">${t.topic||""}</td>
       <td data-label="Marks">${t.marks}/${t.total}</td>
       <td data-label="%">${t.total? Math.round(t.marks/t.total*100):0}%</td>
@@ -423,7 +716,7 @@ function renderTestLogTab(){
     </tr>`).join("");
 
   return `
-    <h2 class="tabtitle">Test Series & MCQ Practice Log</h2>
+    <h2 class="tabtitle">Test Series & MCQ Practice Log &mdash; ${LEVEL_NAMES[state.currentLevel]}</h2>
     <div class="cards">${catCards}</div>
     <div class="testform">
       <div><label>Date</label><input type="date" id="t-date"></div>
@@ -432,7 +725,7 @@ function renderTestLogTab(){
       </div>
       <div><label>Source / Booklet</label><input type="text" id="t-source" placeholder="e.g. ICAI RTP, VG Learning, Self"></div>
       <div><label>Subject</label>
-        <select id="t-subject">${Object.keys(CATALOG).map(k=>`<option value="${k}">${CATALOG[k].name}</option>`).join("")}</select>
+        <select id="t-subject">${Object.keys(CATALOG()).map(k=>`<option value="${k}">${CATALOG()[k].name}</option>`).join("")}</select>
       </div>
       <div><label>Topic / Chapter</label><input type="text" id="t-topic" placeholder="e.g. Ind AS 115"></div>
       <div><label>Marks Obtained</label><input type="number" id="t-marks" value="0"></div>
@@ -461,14 +754,14 @@ function attachTestLogListeners(){
       total: Number(document.getElementById("t-total").value)||0,
       notes: document.getElementById("t-notes").value
     };
-    state.testLog.unshift(entry);
+    currentLevelState().testLog.unshift(entry);
     queueSave();
     renderTab("TESTLOG");
     renderDashboard();
   });
   document.querySelectorAll(".del-btn").forEach(btn=>{
     btn.addEventListener("click",(e)=>{
-      state.testLog.splice(Number(e.target.dataset.i),1);
+      currentLevelState().testLog.splice(Number(e.target.dataset.i),1);
       queueSave();
       renderTab("TESTLOG");
       renderDashboard();
@@ -476,18 +769,26 @@ function attachTestLogListeners(){
   });
 }
 
-/* ---------------- Tab machinery ---------------- */
-const TABS = ["DASH", ...Object.keys(CATALOG), "TESTLOG"];
+/* ================= Tab machinery ================= */
+function currentTabs(){ return ["DASH", ...Object.keys(CATALOG()), "TESTLOG"]; }
+
 function tabLabel(t){
   if(t==="DASH") return "📊 Dashboard";
   if(t==="TESTLOG") return "📝 Test Series";
-  return CATALOG[t].name.split(" ")[0]==="Integrated" ? "IBS" : CATALOG[t].name.split(/[,(]/)[0].trim().split(" ").slice(0,2).join(" ");
+  const name = CATALOG()[t].name;
+  const m = name.match(/^Paper (\d+):\s*(.+)$/);
+  if(m){
+    const short = m[2].split(/[,(]/)[0].trim().split(" ").slice(0,3).join(" ");
+    return `P${m[1]} ${short}`;
+  }
+  if(name.startsWith("Integrated")) return "IBS";
+  return name.split(/[,(]/)[0].trim().split(" ").slice(0,3).join(" ");
 }
-let activeTab = "DASH";
 
 function renderNav(){
   const nav = document.getElementById("tabNav");
-  nav.innerHTML = TABS.map(t=>`<button data-tab="${t}" class="${t===activeTab?'active':''}">${tabLabel(t)}</button>`).join("");
+  const tabs = currentTabs();
+  nav.innerHTML = tabs.map(t=>`<button data-tab="${t}" class="${t===activeTab?'active':''}">${tabLabel(t)}</button>`).join("");
   nav.querySelectorAll("button").forEach(b=>{
     b.addEventListener("click", ()=>{ activeTab=b.dataset.tab; renderNav(); showTab(activeTab); });
   });
@@ -503,7 +804,7 @@ function renderTab(t){
     main.appendChild(el);
   }
   if(t==="DASH"){
-    el.innerHTML = `<h2 class="tabtitle">Dashboard</h2><div id="dash-content"></div>`;
+    el.innerHTML = `<h2 class="tabtitle">Dashboard &mdash; ${LEVEL_NAMES[state.currentLevel]}</h2><div id="dash-content"></div>`;
     renderDashboard();
   } else if(t==="TESTLOG"){
     el.innerHTML = renderTestLogTab();
@@ -520,12 +821,31 @@ function showTab(t){
   if(el) el.classList.add("active");
 }
 
+function rebuildAllTabs(){
+  document.getElementById("main").innerHTML = "";
+  activeTab = "DASH";
+  renderNav();
+  currentTabs().forEach(t=>renderTab(t));
+  showTab(activeTab);
+}
+
+function refreshLevelUI(){
+  document.getElementById("mainTitle").textContent = `${LEVEL_ICONS[state.currentLevel]} ${LEVEL_NAMES[state.currentLevel]} Study Tracker`;
+  document.getElementById("levelSelect").value = state.currentLevel;
+  document.getElementById("examDate").value = currentLevelState().examDate || "";
+  updateCountdown();
+  rebuildAllTabs();
+}
+
 function init(){
   loadState();
-  document.getElementById("examDate").value = state.examDate || "";
-  updateCountdown();
+  document.getElementById("levelSelect").addEventListener("change",(e)=>{
+    state.currentLevel = e.target.value;
+    queueSave();
+    refreshLevelUI();
+  });
   document.getElementById("examDate").addEventListener("change",(e)=>{
-    state.examDate = e.target.value;
+    currentLevelState().examDate = e.target.value;
     updateCountdown();
     queueSave();
   });
@@ -533,13 +853,11 @@ function init(){
     const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = "ca-final-tracker-backup.json"; a.click();
+    a.href = url; a.download = "ca-tracker-backup.json"; a.click();
     URL.revokeObjectURL(url);
   });
 
-  renderNav();
-  TABS.forEach(t=>renderTab(t));
-  showTab(activeTab);
+  refreshLevelUI();
   setSaveStatus(false);
 }
 

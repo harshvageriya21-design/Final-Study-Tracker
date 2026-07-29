@@ -1,7 +1,7 @@
 {
-  "name": "CA Final Study Tracker",
+  "name": "CA Study Tracker - Foundation, Inter, Final",
   "short_name": "CA Tracker",
-  "description": "Track syllabus, revisions, question bank progress, and test series for CA Final",
+  "description": "Track syllabus, revisions, question bank progress, and test series for CA Foundation, Intermediate, and Final",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",

@@ -1,50 +1,50 @@
-# CA Final Study Tracker — Installable Mobile App (PWA)
+# CA Study Tracker (Foundation + Intermediate + Final) — Installable Mobile App
 
-This folder is a complete, installable web app (a "Progressive Web App").
-Each person who installs it gets their OWN independent copy of the data,
+One single app now covers all three CA levels. A dropdown at the top lets
+you (or any friend using it) switch between:
+- CA Foundation
+- CA Intermediate
+- CA Final
+
+Each level keeps its own completely separate data (subjects, chapters,
+weightage, revisions, question bank, test log, exam date) within the same
+installed app — switching levels never mixes or overwrites another level's
+progress.
+
+Each person who installs this gets their OWN independent copy of the data,
 stored only on their own phone/browser — nothing is shared or synced
-between users, and nothing goes through any of your accounts.
+between users.
 
 ## Files
 - index.html          -> the app itself
-- manifest.json        -> tells phones how to install it (name, icon, colors)
-- service-worker.js     -> lets it work offline once installed
+- manifest.json         -> tells phones how to install it (name, icon, colors)
+- service-worker.js      -> lets it work offline once installed
 - icons/icon-192.png, icons/icon-512.png -> app icons
 
-## Step 1 - Put it on the internet (needed once, by you)
-A PWA needs to be served from a real URL (not just opened as a local file)
-for "Add to Home Screen" and offline mode to work properly. Easiest free
-options, no coding required:
-
-1. **GitHub Pages** (free, keeps a URL forever)
-   - Create a free GitHub account if you don't have one.
-   - Create a new repository, upload all files in this folder (keep the
-     "icons" folder structure as-is).
-   - Go to Settings -> Pages -> set source to your main branch -> Save.
-   - GitHub gives you a URL like: https://yourusername.github.io/reponame/
-
-2. **Netlify Drop** (free, fastest, no account needed for a quick test)
+## Step 1 - Put it online (needed once, by you)
+1. **Netlify Drop** (free, fastest, no signup for a quick test)
    - Go to https://app.netlify.com/drop
-   - Drag this whole folder onto the page.
-   - It instantly gives you a live URL you can share.
+   - Drag this whole folder onto the page — you get a live URL instantly.
+   - To keep the link permanent, create a free Netlify account and claim
+     the site afterwards (Site settings -> your dashboard).
 
-Either way, once it's live, share that URL with anyone you want to use it.
+2. **GitHub Pages** (also free)
+   - Create a public GitHub repo, upload all files (keep the icons/ folder).
+   - Settings -> Pages -> Deploy from branch -> main -> / (root) -> Save.
 
 ## Step 2 - Install it on a phone
-Whoever visits the URL on their phone:
-- **Android (Chrome)**: tap the 3-dot menu -> "Add to Home screen" / "Install app"
-- **iPhone (Safari)**: tap the Share icon -> "Add to Home Screen"
+On the live URL:
+- **Android (Chrome)**: 3-dot menu -> "Add to Home screen" / "Install app"
+- **iPhone (Safari)**: Share icon -> "Add to Home Screen"
 
-It will then appear as its own app icon, open full-screen (no browser bars),
-and work offline after the first visit.
+It then opens as its own full-screen app icon and works offline.
 
-## Important notes
+## Notes for your friends using it
+- Pick your level from the dropdown at the top once — the tracker remembers
+  your choice and reopens on the same level next time.
 - Data is stored per person, per browser, per device — it does NOT sync
-  between a phone and a laptop, or between two different people.
-- Each person should keep using the same URL/installed icon going forward —
-  don't reinstall from a different link or clear site data, or their
-  entries will reset.
-- If you update the tracker later (new columns, fixed bugs, etc.), just
-  re-upload the changed files to the same GitHub/Netlify location — everyone's
-  installed app will pick up the new version next time they open it with
-  an internet connection (the old data stays untouched).
+  between people or between a phone and a laptop.
+- Keep reopening the same installed icon/URL — don't reinstall from a
+  different link or clear site data, or entries will reset.
+- The "⬇ Backup JSON" button saves everything (all three levels) as one
+  file — useful before clearing browser data or switching phones.
